@@ -1,24 +1,73 @@
 const container = document.querySelector(".container");
-const column = document.querySelectorAll(".column");
+const btn = document.querySelector(".change-grid-button");
+const btnClear = document.querySelector(".clear-button");
 
-for (let j = 0; j < 16; j++) {
-    let column = document.createElement("div");
+function createSquare(size) {
+    let squareContainer = document.createElement("div");
+    squareContainer.classList.add("square-container")
 
-    column.classList.add("column");
+    container.appendChild(squareContainer);
 
-    container.appendChild(column);
-    for (let i = 0; i < 16; i++) {
-        let row = document.createElement("div");
+    for (let j = 0; j < size; j++) {
+        let column = document.createElement("div");
 
-        row.classList.add("row");
+        column.classList.add("column");
 
-        column.appendChild(row);
+        squareContainer.appendChild(column);
+        for (let i = 0; i < size; i++) {
+            let row = document.createElement("div");
+
+            row.classList.add("row");
+            row.dataset.opacity = 0;
+
+            column.appendChild(row);
+        }
     }
+
 }
+
+function getRandomRgbNumber() {
+    return Math.floor(Math.random() * 255);
+}
+
+function getRandomRgbColor() {
+    r = getRandomRgbNumber();
+    g = getRandomRgbNumber();
+    b = getRandomRgbNumber();
+    return `rgb(${r}, ${g}, ${b})`
+}
+
+createSquare(16);
+
+btn.addEventListener("click", () => {
+    let size = parseInt(prompt("Enter a new grid size (1-100):"));
+
+    if (isNaN(size) || size < 1 || size > 100) return alert("Erro")
+
+    let squareContainer = document.querySelector(".square-container");
+    container.removeChild(squareContainer);
+    createSquare(size);
+})
+
+btnClear.addEventListener("click", () => {
+    let divs = document.querySelectorAll(".row");
+
+    divs.forEach(element => {
+        element.style.backgroundColor = "white";
+    });
+})
 
 container.addEventListener("mouseover", event => {
     let div = event.target;
 
-    if(event.target.classList.value === "row")
-    div.style.backgroundColor = "red";
+    if (div.classList.contains("row")) {
+        if (div.style.backgroundColor === "white" || !div.style.backgroundColor) {
+            div.style.backgroundColor = getRandomRgbColor();
+        }
+
+        div.dataset.opacity = Number(div.dataset.opacity) + 0.1;
+        div.style.opacity = div.dataset.opacity
+    }
+
 })
+
